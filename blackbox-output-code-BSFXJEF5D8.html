@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌸 Custom Flower Bouquet Maker - PRO</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #a8edea 100%);
+            min-height: 100vh; overflow-x: hidden;
+        }
+        
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        
+        /* Header */
+        .header {
+            text-align: center; padding: 40px 20px; background: rgba(255,255,255,0.95);
+            border-radius: 30px; margin-bottom: 30px; box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+        }
+        
+        .header h1 {
+            font-size: 3em; background: linear-gradient(45deg, #ff6b9d, #c44569);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+        
+        .free-pro { 
+            background: linear-gradient(45deg, #56ab2f, #a8e6cf); color: white;
+            padding: 15px 40px; border-radius: 50px; font-size: 1.4em; font-weight: 700;
+            display: inline-block; box-shadow: 0 15px 30px rgba(86,171,47,0.4);
+        }
+        
+        /* Main Layout */
+        .main-grid {
+            display: grid; grid-template-columns: 1fr 450px; gap: 30px; margin: 30px 0;
+        }
+        
+        /* Flower Selection Panel */
+        .flower-panel {
+            background: rgba(255,255,255,0.95); border-radius: 25px; padding: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15); height: fit-content;
+        }
+        
+        .panel-title { 
+            text-align: center; font-size: 1.6em; color: #d63384; margin-bottom: 25px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        
+        .flower-categories {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px; margin-bottom: 30px;
+        }
+        
+        .flower-category {
+            text-align: center; cursor: pointer; padding: 15px; border-radius: 15px;
+            transition: all 0.3s ease; border: 3px solid transparent;
+        }
+        
+        .flower-category:hover { 
+            transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            border-color: #ff6b9d;
+        }
+        
+        .flower-category.active { 
+            background: linear-gradient(45deg, #ff6b9d, #c44569); color: white;
+            box-shadow: 0 15px 30px rgba(255,107,157,0.4);
+        }
+        
+        .flower-category i { font-size: 2.5em; display: block; margin-bottom: 10px; }
+        
+        /* Individual Flowers */
+        .flowers-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-height: 400px;
+            overflow-y: auto; padding: 10px;
+        }
+        
+        .flower-item {
+            aspect-ratio: 1; border-radius: 15px; cursor: grab; transition: all 0.3s ease;
+            display: flex; flex-direction: column; align-items: center; padding: 15px;
+            background: rgba(255,255,255,0.7); border: 3px solid transparent;
+        }
+        
+        .flower-item:hover { 
+            transform: scale(1.1); box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            border-color: #ff6b9d;
+        }
+        
+        .flower-img {
+            width: 60px; height: 60px; object-fit: contain; margin-bottom: 8px;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+        }
+        
+        .flower-name { font-size: 0.85em; font-weight: 600; text-align: center; }
+        
+        /* Bouquet Canvas */
+        .bouquet-canvas {
+            background: rgba(255,255,255,0.95); border-radius: 25px; padding: 40px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15); height: 600px;
+            position: relative; overflow: hidden;
+            background: linear-gradient(135deg, #fff1f5 0%, #f0f8ff 100%);
+        }
+        
+        .canvas-title {
+            text-align: center; font-size: 1.5em; color: #d63384; margin-bottom: 30px;
+        }
+        
+        #bouquetArea {
+            width: 100%; height: 450px; position: relative; border: 4px dashed #ff6b9d;
+            border-radius: 20px; background: rgba(255,255,255,0.3); margin: 0 auto;
+            display: flex; align-items: center; justify-content: center; cursor: grab;
+        }
+        
+        .bouquet-flower {
+            position: absolute; width: 80px; height: 80px; cursor: grab;
+            transition: all 0.3s ease; z-index: 10;
+        }
+        
+        .bouquet-flower:active { cursor: grabbing; transform: rotate(5deg); }
+        
+        .bouquet-flower img { width: 100%; height: 100%; object-fit: contain; }
+        
+        .controls {
+            display: flex; gap: 15px; justify-content: center; margin-top: 25px; flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            padding: 15px 25px; border: none; border-radius: 25px; font-weight: 600;
+            cursor: pointer; transition: all 0.3s ease; font-size: 1em;
+        }
+        
+        .add-more { background: linear-gradient(45deg, #ff6b9d, #c44569); color: white; }
+        .add-more:hover { transform: scale(1.05); box-shadow: 0 10px 25px rgba(255,107,157,0.4); }
+        
+        .clear-all { 
+            background: #ff6b6b; color: white; 
+        }
+        .clear-all:hover { transform: scale(1.05); box-shadow: 0 10px 25px rgba(255,107,107,0.4); }
+        
+        /* Share Panel */
+        .share-panel {
+            background: rgba(255,255,255,0.95); border-radius: 25px; padding: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15); text-align: center;
+        }
+        
+        .share-title { 
+            color: #d63384; font-size: 1.6em; margin-bottom: 20px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        
+        .share-buttons {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 25px 0;
+        }
+        
+        .share-btn {
+            padding: 20px; border-radius: 20px; color: white; text-decoration: none;
+            font-weight: 600; font-size: 1.1em; display: flex; align-items: center;
+            justify-content: center; gap: 12px; transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .whatsapp { background: #25D366; }
+        .whatsapp:hover { transform: translateY(-3px) scale(1.02); }
+        
+        .instagram { background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); }
+        .instagram:hover { transform: translateY(-3px) scale(1.02); }
+        
+        .facebook { background: #3b5998; }
+        .facebook:hover { transform: translateY(-3px) scale(1.02); }
+        
+        .download { background: linear-gradient(45deg, #667eea, #764ba2); grid-column: span 2; }
+        .download:hover { transform: translateY(-3px) scale(1.02); }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-grid { grid-template-columns: 1fr; }
+            .flower-panel { order: 2; }
+        }
+        
+        @media (max-width: 768px) {
+            .flowers-grid { grid-template-columns: repeat(2, 1fr); }
+            .share-buttons { grid-template-columns: 1fr; }
+        }
+        
+        /* Drag Preview */
+        .drag-preview {
+            position: fixed; pointer-events: none; z-index: 1000;
+            width: 70px; height: 70px; border-radius: 50%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-seedling"></i> Custom Bouquet Maker</h1>
+            <div class="free-pro">🎉 FREE - Create & Share Instantly!</div>
+        </div>
+        
+        <div class="main-grid">
+            <!-- Flower Selection -->
+            <div class="flower-panel">
+                <h3 class="panel-title">
+                    <i class="fas fa-hand-pointer"></i> Choose Flowers
+                </h3>
+                
+                <div class="flower-categories">
+                    <div class="flower-category active" data-category="roses">
+                        <i class="fas fa-rose"></i>
+                        <div>Roses</div>
+                    </div>
+                    <div class="flower-category" data-category="lilies">
+                        <i class="fas fa-flower-tulip"></i>
+                        <div>Lilies</div>
+                    </div>
+                    <div class="flower-category" data-category="tulips">
+                        <i class="fas fa-seedling"></i>
+                        <div>Tulips</div>
+                    </div>
+                    <div class="flower-category" data-category="exotic">
+                        <i class="fas fa-spa"></i>
+                        <div>Exotic</div>
+                    </div>
+                </div>
+                
+                <div class="flowers-grid" id="flowersGrid"></div>
+            </div>
+            
+            <!-- Bouquet Canvas -->
+            <div class="bouquet-canvas">
+                <h3 class="canvas-title">
+                    <i class="fas fa-vase"></i> Your Bouquet ✨
+                    <span id="flowerCount">0 flowers</span>
+                </h3>
+                
+                <div id="bouquetArea"></div>
+                
+                <div class="controls">
+                    <button class="control-btn add-more" onclick="addRandomFlowers()">
+                        <i class="fas fa-plus"></i> Add Magic Flowers
+                    </button>
+                    <button class="control-btn clear-all" onclick="clearBouquet()">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Share Panel -->
+        <div class="share-panel" id="sharePanel" style="display: none;">
+            <h3 class="share-title">
+                <i class="fas fa-share-alt"></i> Share Your Love Bouquet!
+            </h3>
+            <p style="margin-bottom: 20px; font-size: 1.1em;">One tap sharing to impress your love 💕</p>
+            
+            <div class="share-buttons">
+                <a href="#" class="share-btn whatsapp" id="whatsappShare">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </a>
+                <a href="#" class="share-btn instagram" id="instaShare">
+                    <i class="fab fa-instagram"></i> Instagram
+                </a>
+                <a href="#" class="share-btn facebook" id="facebookShare">
+                    <i class="fab fa-facebook-f"></i> Facebook
+                </a>
+                <a href="#" class="share-btn download" id="downloadHD">
+                    <i class="fas fa-download"></i> Download HD
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Flower Data
+        const flowersData = {
+            roses: [
+                { name: 'Red Rose', img: 'https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?w=100&h=100&fit=crop' },
+                { name: 'Pink Rose', img: 'https://images.unsplash.com/photo-1587014611670-f1b5e4e21791?w=100&h=100&fit=crop' },
+                { name: 'White Rose', img: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=100&h=100&fit=crop' },
+                { name: 'Yellow Rose', img: 'https://images.unsplash.com/photo-1586857441609-87c3f2c48e8c?w=100&h=100&fit=crop' }
+            ],
+            lilies: [
+                { name: 'Pink Lily', img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=100&h=100&fit=crop' },
+                { name: 'White Lily', img: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=100&h=100&fit=crop' },
+                { name: 'Orange Lily', img: 'https://images.unsplash.com/photo-1587014611670-f1b5e4e21791?w=100&h=100&fit=crop' }
+            ],
+            tulips: [
+                { name: 'Red Tulip', img: 'https://images.unsplash.com/photo-1554224158-0a3f4a8e149e?w=100&h=100&fit=crop' },
+                { name: 'Purple Tulip', img: 'https://images.unsplash.com/photo-1587014611670-f1b5e4e21791?w=100&h=100&fit=crop' },
+                { name: 'Yellow Tulip', img: 'https://images.unsplash.com/photo-1558618047-3c8c76bbb17e?w=100&h=100&fit=crop' }
+            ],
+            exotic: [
+                { name: 'Orchid', img: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=100&h=100&fit=crop' },
+                { name: 'Sunflower', img: 'https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?w=100&h=100&fit=crop' },
+                { name: 'Daisy', img: 'https://images.unsplash.com/photo-1554224158-0a3f4a8e149e?w=100&h=100&fit=crop' }
+            ]
+        };
+        
+        let currentCategory = 'roses';
+        let bouquetFlowers = [];
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFlowerCategory('roses');
+            setupCategoryButtons();
+            createFloatingHearts();
+        });
+        
+        // Category Selection
+        function setupCategoryButtons() {
+            document.querySelectorAll('.flower-category').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.flower-category').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentCategory = this.dataset.category;
+                    loadFlowerCategory(currentCategory);
+                });
+            });
+        }
+        
+        function loadFlowerCategory(category) {
+            const grid = document.getElementById('flowersGrid');
+            grid.innerHTML = flowersData[category].map(flower => `
+                <div class="flower-item" draggable="true" data-flower="${flower.name}" data-img="${flower.img}">
+                    <img src="${flower.img}" alt="${flower.name}" class="flower-img">
+                    <div class="flower-name">${flower.name}</div>
+                </div>
+            `).join('');
+            
+            setupDragAndDrop();
+        }
+        
+        // Drag & Drop
+        function setupDragAndDrop() {
+            // Flower Items Drag
+            document.querySelectorAll('.flower-item').forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+            });
+            
+            // Bouquet Area Drop
+            const bouquetArea = document.getElementById('bouquetArea');
+            bouquetArea.addEventListener('dragover', handleDragOver);
+            bouquetArea.addEventListener('drop', handleDrop);
+            bouquetArea.add
